@@ -47,7 +47,7 @@ func scanFile() error {
 		case stateHeading:
 			if len(docBuf) > 0 {
 				// if buf is not empty, write out the file
-				fileName = fmt.Sprintf("output/%d.html", fileNum)
+				fileName = fmt.Sprintf("output/%04d.html", fileNum)
 				if err := writeFile(docBuf, fileName); err != nil {
 					panic(err)
 				}
