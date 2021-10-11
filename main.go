@@ -70,6 +70,7 @@ func scanFile() error {
 
 func writeFile(docBuf []string, fileName string) error {
 	f, err := os.Create(fileName)
+	defer f.Close()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -77,7 +78,6 @@ func writeFile(docBuf []string, fileName string) error {
 	docBuf = append([]string{"<html>\n<body>\n"}, docBuf...)
 	docBuf = append(docBuf, "</body>\n</html>\n")
 
-	defer f.Close()
 	if _, err2 := f.WriteString(strings.Join(docBuf, "\n")); err2 != nil {
 		panic(err2)
 	}
