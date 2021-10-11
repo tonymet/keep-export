@@ -21,9 +21,15 @@ var (
 	patternStart   = regexp.MustCompile("<body class=\"c12\"")
 )
 
+func newBuf() []string {
+	docBuf := make([]string, 0, 5)
+	docBuf = append(docBuf, "<html>\n<body>\n")
+	return docBuf
+}
+
 func scanFile() error {
 	var (
-		docBuf   []string = make([]string, 0, 5)
+		docBuf   []string = newBuf()
 		curState int      = stateSkip
 		fileNum  int      = 0
 		fileName string
@@ -45,7 +51,7 @@ func scanFile() error {
 		case stateStart:
 			fmt.Printf("start: %s\n", line)
 		case stateHeading:
-			if len(docBuf) > 0 {
+			if len(docBuf) > 1 {
 				// if buf is not empty, write out the file
 				fileName = fmt.Sprintf("output/%04d.html", fileNum)
 				if err := writeFile(docBuf, fileName); err != nil {
@@ -54,7 +60,7 @@ func scanFile() error {
 				fileNum++
 			}
 			// init buf
-			docBuf = make([]string, 0, 5)
+			docBuf = newBuf()
 			// start appending
 			docBuf = append(docBuf, line)
 			fmt.Printf("heading: %s\n", line)
@@ -75,7 +81,7 @@ func writeFile(docBuf []string, fileName string) error {
 		log.Fatal(err)
 	}
 
-	docBuf = append([]string{"<html>\n<body>\n"}, docBuf...)
+	//docBuf = append([]string{"<html>\n<body>\n"}, docBuf...)
 	docBuf = append(docBuf, "</body>\n</html>\n")
 
 	if _, err2 := f.WriteString(strings.Join(docBuf, "\n")); err2 != nil {
